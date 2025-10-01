@@ -1,0 +1,7 @@
+@echo off
+robocopy "\\tracy-nguyen\DL Chung" "D:\backup_planning_room" /E /XC /XN /XO /R:0 /W:0 /LOG+:D:\copy_log.txt (ghi đè log)
+
+
+@echo off
+del "E:\test\copy_log.txt" >nul 2>&1 (xóa trắng file log)
+robocopy "\\tracy-nguyen\DL Chung" "D:\backup_planning_room" /E /XC /XN /XO /R:0 /W:0 /LOG:D:\copy_log.txt (k ghi đè log)
