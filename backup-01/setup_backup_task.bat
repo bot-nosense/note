@@ -1,20 +1,27 @@
 @echo off
+chcp 65001 >nul
+
+REM Xóa task cũ nếu có
+schtasks /Delete /TN "Backup Planning 01" /F >nul 2>&1
+schtasks /Delete /TN "Backup Planning 02" /F >nul 2>&1
+schtasks /Delete /TN "Backup Planning 03" /F >nul 2>&1
+schtasks /Delete /TN "Backup Planning 04" /F >nul 2>&1
 
 REM Đường dẫn tới script backup
 set SCRIPT=C:\BOT_NOSENSE\note\backup-01\backup_01.bat
 
 REM Kiểm tra file backup script có tồn tại không
 if not exist "%SCRIPT%" (
-    echo [ERROR] File backup script không tồn tại: %SCRIPT%
-    echo Vui lòng kiểm tra lại đường dẫn copy_data.bat trước khi chạy.
+    echo [LỖI] Không tìm thấy file backup script: %SCRIPT%
+    echo Vui lòng kiểm tra lại đường dẫn backup_01.bat trước khi chạy.
     pause
     exit /b 1
 )
 
-echo [OK] Đã tìm thấy file script: %SCRIPT%
+echo [OK] Đã tìm thấy file backup script: %SCRIPT%
 
 REM Tạo task chạy khi khởi động máy
-schtasks /Create /TN "Backup Data" ^
+schtasks /Create /TN "Backup Planning 01" ^
  /TR "%SCRIPT%" ^
  /SC ONSTART ^
  /RU SYSTEM ^
@@ -22,7 +29,7 @@ schtasks /Create /TN "Backup Data" ^
  /F
 
 REM Tạo task chạy lúc 10h sáng mỗi ngày
-schtasks /Create /TN "Backup Data 10AM" ^
+schtasks /Create /TN "Backup Planning 02" ^
  /TR "%SCRIPT%" ^
  /SC DAILY /ST 10:00 ^
  /RU SYSTEM ^
@@ -30,7 +37,7 @@ schtasks /Create /TN "Backup Data 10AM" ^
  /F
 
 REM Tạo task chạy lúc 2h chiều mỗi ngày
-schtasks /Create /TN "Backup Data 2PM" ^
+schtasks /Create /TN "Backup Planning 03" ^
  /TR "%SCRIPT%" ^
  /SC DAILY /ST 14:00 ^
  /RU SYSTEM ^
@@ -38,17 +45,18 @@ schtasks /Create /TN "Backup Data 2PM" ^
  /F
 
 REM Tạo task chạy lúc 5h chiều mỗi ngày
-schtasks /Create /TN "Backup Data 5PM" ^
+schtasks /Create /TN "Backup Planning 04" ^
  /TR "%SCRIPT%" ^
  /SC DAILY /ST 17:00 ^
  /RU SYSTEM ^
  /RL HIGHEST ^
  /F
 
-echo [OK] Task Scheduler đã được tạo:
+echo.
+echo [HOÀN TẤT] Đã tạo lịch sao lưu tự động:
 echo - Khi bật máy
 echo - 10h sáng
-echo - 2h chiều
-echo - 5h chiều
-echo (Chạy dưới quyền SYSTEM, không cần đăng nhập)
+echo - 14h chiều
+echo - 17h chiều
+echo (Chạy bằng tài khoản SYSTEM, không cần đăng nhập)
 pause
